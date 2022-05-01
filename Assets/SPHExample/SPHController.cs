@@ -56,12 +56,13 @@ namespace FluidSPH
 		public ISpace Space => this.Configure.D.simulationSpace;
 		public bool Inited => this.inited;
 		[SerializeField] protected SPHGPUData sphData = new SPHGPUData();
+		public SPHGPUData SphData => sphData;
 		[SerializeField] protected ComputeShader fluidSortedCS;
 		[SerializeField] protected AccumulatorTimestep runner;
 		protected bool inited = false;
-		protected SPHConfigure Configure => this.configure ??= this.gameObject.FindOrAddTypeInComponentsAndChildren<SPHConfigure>();
+		public SPHConfigure Configure => this.configure ??= this.gameObject.FindOrAddTypeInComponentsAndChildren<SPHConfigure>();
 		protected SPHConfigure configure;
-		protected SPHGrid SPHGrid => this.sphGrid ??= this.gameObject.FindOrAddTypeInComponentsAndChildren<SPHGrid>();
+		public SPHGrid SPHGrid => this.sphGrid ??= this.gameObject.FindOrAddTypeInComponentsAndChildren<SPHGrid>();
 		protected SPHGrid sphGrid;
 		protected EmitterController EmitterController => this.emitterController ??= this.gameObject.FindOrAddTypeInComponentsAndChildren<EmitterController>();
 		protected EmitterController emitterController;

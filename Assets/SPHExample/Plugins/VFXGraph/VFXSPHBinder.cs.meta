@@ -1,0 +1,13 @@
+fileFormatVersion: 2
+guid: fff3a720674bab44ba19ba27045a2a9d
+MonoImporter:
+  externalObjects: {}
+  serializedVersion: 2
+  defaultReferences:
+  - sphController: {instanceID: 0}
+  - copyToGraphicsBufferCS: {fileID: 7200000, guid: ecb2a73f06482ce45883da7d308eb856, type: 3}
+  executionOrder: 0
+  icon: {instanceID: 0}
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

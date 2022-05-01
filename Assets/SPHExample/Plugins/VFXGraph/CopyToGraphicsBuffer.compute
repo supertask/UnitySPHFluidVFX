@@ -1,0 +1,47 @@
+//
+// Copy ComputeBuffer to GraphicsBuffer
+//
+#pragma kernel CopyToGraphicsBuffer
+
+#define THREAD_1D 1024
+//#include "Assets/SPHExample/Shader/SPHData.cginc"
+#include "../../Shader/SPHData.cginc"
+
+
+/*
+StructuredBuffer<int> ReadIndexBuffer;
+
+StructuredBuffer<float4> ReadPositionRadiusBuffer;
+RWStructuredBuffer<float3> WritePositionRadiusBuffer;
+
+StructuredBuffer<float4> ReadVelocityBuffer;
+RWStructuredBuffer<float3> WriteVelocityBuffer;
+*/
+
+StructuredBuffer<Particle> ReadParticleBuffer;
+RWStructuredBuffer<float3> WriteParticlePositionBuffer;
+RWStructuredBuffer<int> WriteParticleIndexBuffer;
+RWStructuredBuffer<float4> WriteColorBuffer;
+RWStructuredBuffer<int> WriteTypeBuffer;
+RWStructuredBuffer<float> WriteLifetimeBuffer;
+
+[numthreads(THREAD_1D, 1, 1)]
+void CopyToGraphicsBuffer(uint2 id : SV_DispatchThreadID)
+{
+    uint index = id.x;
+    
+    Particle particle = ReadParticleBuffer[index];
+    //bool isActiveParticle = IsShouldRender(particle);
+    bool isActiveParticle = IsActive(particle);
+    int particleUuid = particle.uuid;
+
+    WriteParticlePositionBuffer[particleUuid] = isActiveParticle ? particle.pos : float3(0,0,0);
+    //WriteParticleIndexBuffer[index] = isActiveParticle ? particle.uuid : 0;
+    WriteColorBuffer[particleUuid] = isActiveParticle ? particle.col : float4(1,1,1,1);
+    WriteTypeBuffer[particleUuid] = particle.type;
+    WriteLifetimeBuffer[particleUuid] = particle.life;
+
+    //WriteIndexBuffer[index] = ReadIndexBuffer[index];
+    //WritePositionRadiusBuffer[index] = ReadPositionRadiusBuffer[index].xyz;
+    //WriteVelocityBuffer[index] = ReadVelocityBuffer[index].xyz;
+}

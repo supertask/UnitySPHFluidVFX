@@ -74,3 +74,7 @@ bool IsActive(Particle p)
 	return p.type != PT_INACTIVE;
 }
 
+bool IsShouldRender(Particle p) {
+	bool shoudRender = !(p.type == PT_INACTIVE || p.type == PT_BOUNDARY  );
+	return shoudRender;
+}
