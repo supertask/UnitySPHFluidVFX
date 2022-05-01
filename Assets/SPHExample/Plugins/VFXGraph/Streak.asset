@@ -1,0 +1,105 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-8117823869221038703
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a5f019255bcd1cb489b193b5e8443a27, type: 3}
+  m_Name: Streak
+  m_EditorClassIdentifier: 
+  active: 1
+  threshold:
+    m_OverrideState: 1
+    m_Value: 0.3
+  stretch:
+    m_OverrideState: 0
+    m_Value: 0.75
+  intensity:
+    m_OverrideState: 1
+    m_Value: 0.508
+  tint:
+    m_OverrideState: 0
+    m_Value: {r: 0.55, g: 0.55, b: 1, a: 1}
+--- !u!114 &-2121409542128565197
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ae7c981926513ae479a3aff37754a8e4, type: 3}
+  m_Name: GodRay
+  m_EditorClassIdentifier: 
+  active: 0
+  power:
+    m_OverrideState: 1
+    m_Value: 1
+  iteration:
+    m_OverrideState: 1
+    m_Value: 100
+  rayDistance:
+    m_OverrideState: 1
+    m_Value: 0.25
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: Streak
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: 7534594352385855329}
+  - {fileID: -8117823869221038703}
+  - {fileID: -2121409542128565197}
+--- !u!114 &7534594352385855329
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e12e84e1766b64919984e8b1ecd65226, type: 3}
+  m_Name: Aqua
+  m_EditorClassIdentifier: 
+  active: 0
+  opacity:
+    m_OverrideState: 1
+    m_Value: 0.285
+  edgeColor:
+    m_OverrideState: 0
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  edgeContrast:
+    m_OverrideState: 0
+    m_Value: 1.2
+  fillColor:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  blurWidth:
+    m_OverrideState: 0
+    m_Value: 1
+  blurFrequency:
+    m_OverrideState: 0
+    m_Value: 0.5
+  hueShift:
+    m_OverrideState: 0
+    m_Value: 0.1
+  interval:
+    m_OverrideState: 0
+    m_Value: 1
+  iteration:
+    m_OverrideState: 0
+    m_Value: 20

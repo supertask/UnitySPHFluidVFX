@@ -167,6 +167,33 @@
         "com.unity.render-pipelines.core": "12.1.6"
       }
     },
+    "jp.keijiro.kino.aqua": {
+      "version": "1.0.3",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.render-pipelines.high-definition": "7.4.1"
+      },
+      "url": "https://registry.npmjs.com"
+    },
+    "jp.keijiro.kino.post-processing": {
+      "version": "2.1.15",
+      "depth": 0,
+      "source": "registry",
+      "dependencies": {
+        "com.unity.render-pipelines.high-definition": "7.4.1"
+      },
+      "url": "https://registry.npmjs.com"
+    },
+    "jp.supertask.cinema.post-processing": {
+      "version": "https://github.com/supertask/Cinema.git?path=/Packages/jp.supertask.cinema.post-processing",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {
+        "com.unity.render-pipelines.high-definition": "11.0.0"
+      },
+      "hash": "f259cd449a585acade63efed1fcdca9e529cea8b"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,
