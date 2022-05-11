@@ -64,8 +64,8 @@ namespace FluidSPH
 
         void Update()
         {
-            this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "ReadParticleBuffer", sphController.SphData.particleBufferSorted.Data);
-            //this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "ReadParticleBuffer", sphController.SphData.particleBuffer.Data);
+            //this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "ReadParticleBuffer", sphController.SphData.particleBufferSorted.Data);
+            this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "ReadParticleBuffer", sphController.SphData.particleBuffer.Data);
             this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "WriteParticlePositionBuffer", positionBuffer);
             this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "WriteParticleIndexBuffer", indexBuffer);
             this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "WriteColorBuffer", colorBuffer);

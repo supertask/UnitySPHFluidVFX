@@ -5,14 +5,30 @@ using Unity.Mathematics;
 using ImageEffectUtil;
 
 
-namespace FluidSPH
+namespace FluidSPH.Scattering
 {
+	struct PParticle 
+	{
+		int uuid;
+		int bpid; //boundary particle id for boundary only
+		float3 pos;
+		float3 vel;
+		float3 w;//angular velocity
+		float4 col;
+		float life;
+		int type;
+		
+		public override string ToString() => $"PParticle(uuid{uuid}position={pos}, velocity={vel}, color={col}, type={type})";
+	};
+	
+	
 	[ImageEffectAllowedInSceneView]
     public class ScatteringImageEffect : ImageEffectBase
     {
         public const string HEADER_DECORATION = " --- ";
 
 		[Header (HEADER_DECORATION + "System" + HEADER_DECORATION)]
+				
         //public GameObject mediator;
         //public GpuMpmParticleSystem mpmPS;
 		
@@ -48,13 +64,21 @@ namespace FluidSPH
             base.Start();
         }
 
+		public void Update()
+		{
+		}
+
+
         protected override void OnRenderImage(RenderTexture src, RenderTexture dst)
         {
 			// Validate inputs
 			if (this.imageEffectMat == null || imageEffectMat.shader != shader) {
 				imageEffectMat = new Material (this.shader);
 			}
-
+			
+			
+			
+			
 			this.imageEffectMat.SetFloat ("_FireIntensity", fireIntensity);
 			this.imageEffectMat.SetFloat ("_DensityOffset", densityOffset);
             
@@ -93,6 +117,27 @@ namespace FluidSPH
 
             Graphics.Blit(src, dst, this.imageEffectMat);
         }
+		
+		
+		//
+		// Debug Compute Buffer
+		// When you define a struct/class,
+		// please use override ToString(), public override string ToString() => $"MpmParticle(position={position}, velocity={velocity})";
+		//
+		// debugging range is startIndex <= x < endIndex
+		// example: 
+		//    Util.PrintBuffer<uint2>(this.particlesBuffer, 1024, 1027); 
+		//
+		public static void PrintBuffer<T>(ComputeBuffer buffer, int startIndex, int endIndex) where T  : struct
+		{
+			int N = endIndex - startIndex;
+			T[] array = new T[N];
+			buffer.GetData(array, 0, startIndex, N);
+			for (int i = 0; i < N; i++)
+			{
+				Debug.LogFormat("index={0}: {1}", startIndex + i, array[i]);
+			}
+		}
 
     }
 }

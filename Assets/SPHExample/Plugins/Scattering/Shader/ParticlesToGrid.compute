@@ -1,0 +1,38 @@
+﻿#pragma kernel P2GScattering
+
+//#include "Assets/SPHExample/Shader/SPHData.cginc"
+#include "../../../Shader/SPHData.cginc"
+#include "./Constant.hlsl"
+#include "./Grid.hlsl"
+//#include "./FloatToInt2.hlsl"
+
+#define PARTICLE_MASS 1
+
+struct Cell {
+    int mass;
+};
+
+//#define THREAD_1D 256
+#define THREAD_1D 64
+
+uint _NumOfParticles;
+
+RWStructuredBuffer<Particle> _ParticlesBufferRead;
+RWStructuredBuffer<Cell> _GridBufferWrite;
+
+[numthreads(THREAD_1D,1,1)]
+void P2GScattering(uint3 DTid : SV_DispatchThreadID)
+{
+    const uint particleId = DTid.x;
+	if (particleId > _NumOfParticles) return;
+
+	Particle particle = _ParticlesBufferRead[particleId];
+	if (particle.type == TYPE__INACTIVE) return;
+
+	int3 centerCellIndex3D = ParticlePositionToCellIndex3D(particle.pos);
+	if (InGrid(centerCellIndex3D))
+	{
+		uint cellIndex = CellIndex3DTo1D(centerCellIndex3D);
+		InterlockedAdd(_GridBufferWrite[cellIndex].mass, PARTICLE_MASS);
+	}
+}
