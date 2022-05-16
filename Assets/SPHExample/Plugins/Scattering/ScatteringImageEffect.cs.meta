@@ -3,7 +3,9 @@ guid: fe964d4eff778e641ad990a438adb396
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - shader: {fileID: 4800000, guid: 8065f7f657672e44f93d2ac49618fc3f, type: 3}
+  - particlesToGrid: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

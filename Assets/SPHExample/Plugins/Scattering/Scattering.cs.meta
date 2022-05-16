@@ -1,11 +1,11 @@
 fileFormatVersion: 2
-guid: 908a7acf972321d4c8e19c74c2fb6625
+guid: 12311b92b7cfcd94884831c4ab5a13c1
 MonoImporter:
   externalObjects: {}
   serializedVersion: 2
   defaultReferences:
-  - sphController: {instanceID: 0}
-  - particlesToGridCS: {fileID: 7200000, guid: 1164b63dbc173534ca0b0368cd2af61a, type: 3}
+  - shader: {fileID: 4800000, guid: 8065f7f657672e44f93d2ac49618fc3f, type: 3}
+  - particlesToGrid: {instanceID: 0}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 

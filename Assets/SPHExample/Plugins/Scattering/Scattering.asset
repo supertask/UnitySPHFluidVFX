@@ -1,0 +1,85 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &-5336768117255755037
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 12311b92b7cfcd94884831c4ab5a13c1, type: 3}
+  m_Name: Scattering
+  m_EditorClassIdentifier: 
+  active: 1
+  block:
+    m_OverrideState: 1
+    m_Value: 0.464
+  rayOffsetStrength: 1
+  densityOffset: 150
+  smokeAbsorption: 60
+  lightAbsorptionTowardSun: 1.21
+  lightAbsorptionThroughCloud: 0.75
+  darknessThreshold: 0.15
+  forwardScattering: 0.811
+  backScattering: 0.33
+  baseBrightness: 1
+  phaseFactor: 0.488
+  fireIntensity: 1
+  isDebugScattering: 0
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d7fd9488000d3734a9e00ee676215985, type: 3}
+  m_Name: Scattering
+  m_EditorClassIdentifier: 
+  components:
+  - {fileID: 7534594352385855329}
+  - {fileID: -5336768117255755037}
+--- !u!114 &7534594352385855329
+MonoBehaviour:
+  m_ObjectHideFlags: 3
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e12e84e1766b64919984e8b1ecd65226, type: 3}
+  m_Name: Aqua
+  m_EditorClassIdentifier: 
+  active: 0
+  opacity:
+    m_OverrideState: 1
+    m_Value: 0.285
+  edgeColor:
+    m_OverrideState: 0
+    m_Value: {r: 0, g: 0, b: 0, a: 1}
+  edgeContrast:
+    m_OverrideState: 0
+    m_Value: 1.2
+  fillColor:
+    m_OverrideState: 0
+    m_Value: {r: 1, g: 1, b: 1, a: 1}
+  blurWidth:
+    m_OverrideState: 0
+    m_Value: 1
+  blurFrequency:
+    m_OverrideState: 0
+    m_Value: 0.5
+  hueShift:
+    m_OverrideState: 0
+    m_Value: 0.1
+  interval:
+    m_OverrideState: 0
+    m_Value: 1
+  iteration:
+    m_OverrideState: 0
+    m_Value: 20

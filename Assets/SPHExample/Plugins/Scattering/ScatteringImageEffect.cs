@@ -7,6 +7,7 @@ using ImageEffectUtil;
 
 namespace FluidSPH.Scattering
 {
+	/*
 	struct PParticle 
 	{
 		int uuid;
@@ -20,6 +21,7 @@ namespace FluidSPH.Scattering
 		
 		public override string ToString() => $"PParticle(uuid{uuid}position={pos}, velocity={vel}, color={col}, type={type})";
 	};
+	*/
 	
 	
 	[ImageEffectAllowedInSceneView]
@@ -30,7 +32,7 @@ namespace FluidSPH.Scattering
 		[Header (HEADER_DECORATION + "System" + HEADER_DECORATION)]
 				
         //public GameObject mediator;
-        //public GpuMpmParticleSystem mpmPS;
+        public ParticlesToGrid particlesToGrid;
 		
 		//protected SPHGrid SPHGrid => this.sphGrid ??= this.gameObject.FindOrAddTypeInComponentsAndChildren<SPHGrid>();
 		//protected SPHGrid sphGrid;
@@ -77,8 +79,6 @@ namespace FluidSPH.Scattering
 			}
 			
 			
-			
-			
 			this.imageEffectMat.SetFloat ("_FireIntensity", fireIntensity);
 			this.imageEffectMat.SetFloat ("_DensityOffset", densityOffset);
             
@@ -91,22 +91,16 @@ namespace FluidSPH.Scattering
 			this.imageEffectMat.SetFloat("_DarknessThreshold", darknessThreshold);
 			//Debug.Log("_LightAbsorptionThroughCloud: " + lightAbsorptionThroughCloud);
 			
-			//this.imageEffectMat.SetVector("_BoundingPosition", (Vector3) this.configure.D.simulationSpace.Center );
 			
-			//Bounds bounds  = this.mpmPS.GetGridBounds();
-			//int3 gridSize = this.sphGrid.GridGPUData.gridSize;
-			//float3 boundingSize = gridSize * this.sphGrid.GridGPUData.gridSpacing;
-			//this.imageEffectMat.SetVector("_BoundingScale", (Vector3) boundingSize );
-            //this.imageEffectMat.SetVector ("_BoundsMin", bounds.min);
-			//this.imageEffectMat.SetVector ("_BoundsMax", bounds.max);
+			Bounds bounds  = this.particlesToGrid.GetGridBounds();
+			this.imageEffectMat.SetVector("_BoundingPosition", bounds.center );
+			this.imageEffectMat.SetVector("_BoundingScale", bounds.size );
+            this.imageEffectMat.SetVector ("_BoundsMin", bounds.min);
+			this.imageEffectMat.SetVector ("_BoundsMax", bounds.max);
 
-			//this.sphGrid.GridGPUData.gridBuffer
-			//this.imageEffectMat.SetBuffer("_GridBuffer", this.sphGrid.GridGPUData.gridBuffer);
-			//this.imageEffectMat.SetVector("_GridDimension", (Vector3) (float3) gridSize );
-
-			//this.imageEffectMat.SetBuffer("_GridBuffer", this.mpmPS.LockGridBuffer);
-			//this.imageEffectMat.SetVector("_GridDimension", this.mpmPS.GetGridDimension());
-			//Debug.Log("grid dimension: " + this.mpmPS.GetGridDimension() );
+			this.imageEffectMat.SetBuffer("_GridBuffer", this.particlesToGrid.GridBuffer);
+			this.imageEffectMat.SetVector("_GridDimension", this.particlesToGrid.GetGridDimension());
+			//Debug.Log("grid dimension: " + this.particlesToGrid.GetGridDimension() );
 
 			if (this.isDebugScattering) {
 				this.imageEffectMat.EnableKeyword("DEBUG_SCATTERING");
@@ -117,27 +111,5 @@ namespace FluidSPH.Scattering
 
             Graphics.Blit(src, dst, this.imageEffectMat);
         }
-		
-		
-		//
-		// Debug Compute Buffer
-		// When you define a struct/class,
-		// please use override ToString(), public override string ToString() => $"MpmParticle(position={position}, velocity={velocity})";
-		//
-		// debugging range is startIndex <= x < endIndex
-		// example: 
-		//    Util.PrintBuffer<uint2>(this.particlesBuffer, 1024, 1027); 
-		//
-		public static void PrintBuffer<T>(ComputeBuffer buffer, int startIndex, int endIndex) where T  : struct
-		{
-			int N = endIndex - startIndex;
-			T[] array = new T[N];
-			buffer.GetData(array, 0, startIndex, N);
-			for (int i = 0; i < N; i++)
-			{
-				Debug.LogFormat("index={0}: {1}", startIndex + i, array[i]);
-			}
-		}
-
     }
 }

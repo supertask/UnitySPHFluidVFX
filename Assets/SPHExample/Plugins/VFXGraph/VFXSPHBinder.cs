@@ -73,7 +73,7 @@ namespace FluidSPH
             this.copyToGraphicsBufferCS.SetBuffer(copyToGBufferKernel.Index, "WriteLifetimeBuffer", lifetimeBuffer);
             
             this.copyToGraphicsBufferCS.Dispatch(copyToGBufferKernel.Index,
-                Mathf.CeilToInt((float)sphController.Configure.D.numOfParticle / copyToGBufferKernel.ThreadX), 1, 1);
+                Mathf.CeilToInt((float)this.sphController.Configure.D.numOfParticle / copyToGBufferKernel.ThreadX), 1, 1);
 
             if (Time.frameCount % 24 == 0)
             {
@@ -95,6 +95,26 @@ namespace FluidSPH
         //    Util.PrintBuffer<uint2>(this.particlesBuffer, 1024, 1027); 
         //
         public static void PrintBuffer<T>(ComputeBuffer buffer, int startIndex, int endIndex) where T  : struct
+        {
+            int N = endIndex - startIndex;
+            T[] array = new T[N];
+            buffer.GetData(array, 0, startIndex, N);
+            for (int i = 0; i < N; i++)
+            {
+                Debug.LogFormat("index={0}: {1}", startIndex + i, array[i]);
+            }
+        }
+        
+        //
+        // Print Compute Buffer
+        // When you define a struct/class,
+        // please use override ToString(), public override string ToString() => $"MpmParticle(position={position}, velocity={velocity})";
+        //
+        // debugging range is startIndex <= x < endIndex
+        // example: 
+        //    Util.PrintBuffer<uint2>(this.particlesBuffer, 1024, 1027); 
+        //
+        public static void PrintBuffer<T>(GraphicsBuffer buffer, int startIndex, int endIndex) where T  : struct
         {
             int N = endIndex - startIndex;
             T[] array = new T[N];

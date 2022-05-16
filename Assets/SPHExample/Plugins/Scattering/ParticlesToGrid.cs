@@ -4,6 +4,10 @@ using System.Runtime.InteropServices;
 using System.Linq;
 
 using UnityEngine;
+using UnityEngine.VFX;
+
+using Unity.Mathematics;
+
 
 using ComputeShaderUtil;
 
@@ -11,10 +15,18 @@ namespace FluidSPH.Scattering
 {
     public struct Cell
     {
-        public float mass; //4 byte
+        public int mass; //4 byte
+        public float3 position;
+        public uint3 cellIndex3D;
+        public int cellIndex;
 
-        public override string ToString() {
-            return $"MassCell(mass={mass})";
+        public string GetFloat3(float3 v) {
+            return $"(x = {v.x}, y = {v.y}, z = {v.z})";
+        }
+
+        public override string ToString()
+        {
+            return $"MassCell(mass = {mass}, position = {GetFloat3(position)}, cellIndex3D = {cellIndex3D}, cellIndex = {cellIndex})";
         }
     };
 
@@ -28,11 +40,12 @@ namespace FluidSPH.Scattering
         [SerializeField] public ComputeShader particlesToGridCS;
 
         [SerializeField] public float gridSpacingH = 0.5f; //0.5m
-        [SerializeField] public int gridWidth = 80, gridHeight = 80, gridDepth = 80;
+        [SerializeField] public int gridWidth = 20, gridHeight = 40, gridDepth = 100;
         
         private int numOfCells;
-        private Kernel particlesToGridKernel;
-        private GraphicsBuffer gridBuffer;
+        private Kernel resetGridKernel, particlesToGridKernel;
+        private GraphicsBuffer gridBuffer, gridMassBuffer, gridPositionBuffer;
+        public GraphicsBuffer GridBuffer => gridBuffer;
 
         public static class ShaderID
         {
@@ -43,8 +56,15 @@ namespace FluidSPH.Scattering
             public static int CellStartPos = Shader.PropertyToID("_CellStartPos"); // I Dont know the meaning
             //public static int ParticleType = Shader.PropertyToID("_ParticleType");
 
-            public static int GridBufferWrite = Shader.PropertyToID("_GridBufferWrite");
+            public static int NumOfParticles = Shader.PropertyToID("_NumOfParticles");
+
             public static int ParticlesBufferRead = Shader.PropertyToID("_ParticlesBufferRead");
+            
+            public static int GridBufferWrite = Shader.PropertyToID("_GridBufferWrite");
+            public static int GridMassBufferWrite = Shader.PropertyToID("_GridMassBufferWrite");
+            public static int GridPositionBufferWrite = Shader.PropertyToID("_GridPositionBufferWrite");
+
+            
         }
 
         void OnEnable()
@@ -55,23 +75,95 @@ namespace FluidSPH.Scattering
             this.gridBuffer.SetData(Enumerable.Range(0, this.numOfCells)
                 .Select(_ => new Cell()).ToArray());
                 
-            this.particlesToGridKernel = new Kernel(this.particlesToGridCS, "P2GScattering");
+            this.gridMassBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, this.numOfCells, Marshal.SizeOf(typeof(int)));
+            this.gridPositionBuffer = new GraphicsBuffer(GraphicsBuffer.Target.Structured, this.numOfCells, Marshal.SizeOf(typeof(float3)));
 
+            this.GetComponent<VisualEffect>().SetInt("NumOfCells", this.numOfCells);
+            this.GetComponent<VisualEffect>().SetGraphicsBuffer("GridMassBuffer", gridMassBuffer);
+            this.GetComponent<VisualEffect>().SetGraphicsBuffer("GridPositionBuffer", gridPositionBuffer);
+            
+            this.particlesToGridKernel = new Kernel(this.particlesToGridCS, "P2GScattering");
+            this.resetGridKernel = new Kernel(this.particlesToGridCS, "ResetGrid");
         }
 
         void Update()
         {
+            this.ResetGrid();
             this.ComputeParticlesToGrid();
+            //Util.PrintBuffer<Cell>(this.gridBuffer, 0, 10);
         }
+        
+        void ResetGrid()
+        {
+            this.particlesToGridCS.SetVector( ShaderID.CellStartPos, this.GetCellStartPos());
+            this.particlesToGridCS.SetInt( ShaderID.GridResolutionWidth, gridWidth);
+            this.particlesToGridCS.SetInt( ShaderID.GridResolutionHeight, gridHeight);
+            this.particlesToGridCS.SetInt( ShaderID.GridResolutionDepth, gridDepth);
+            this.particlesToGridCS.SetFloat( ShaderID.GridSpacingH, gridSpacingH);
+            
+            this.particlesToGridCS.SetBuffer(this.resetGridKernel.Index, ShaderID.GridBufferWrite, this.gridBuffer);
+            this.particlesToGridCS.SetBuffer(this.resetGridKernel.Index, ShaderID.GridMassBufferWrite, this.gridMassBuffer);
+            this.particlesToGridCS.SetBuffer(this.resetGridKernel.Index, ShaderID.GridPositionBufferWrite, this.gridPositionBuffer);
+            
+            this.particlesToGridCS.Dispatch(this.resetGridKernel.Index,
+                Mathf.CeilToInt( (this.numOfCells) / (float)this.resetGridKernel.ThreadX),
+                (int)this.resetGridKernel.ThreadY,
+                (int)this.resetGridKernel.ThreadZ);
+        }
+        
         
         void ComputeParticlesToGrid()
         {
+            this.particlesToGridCS.SetVector( ShaderID.CellStartPos, this.GetCellStartPos());
+            this.particlesToGridCS.SetInt( ShaderID.GridResolutionWidth, gridWidth);
+            this.particlesToGridCS.SetInt( ShaderID.GridResolutionHeight, gridHeight);
+            this.particlesToGridCS.SetInt( ShaderID.GridResolutionDepth, gridDepth);
+            this.particlesToGridCS.SetFloat( ShaderID.GridSpacingH, gridSpacingH);
+            
+            this.particlesToGridCS.SetInt( ShaderID.NumOfParticles, this.sphController.Configure.D.numOfParticle);
             this.particlesToGridCS.SetBuffer(this.particlesToGridKernel.Index, ShaderID.ParticlesBufferRead, this.sphController.SphData.particleBuffer.Data);
             this.particlesToGridCS.SetBuffer(this.particlesToGridKernel.Index, ShaderID.GridBufferWrite, this.gridBuffer);
+            
+            this.particlesToGridCS.SetBuffer(this.particlesToGridKernel.Index, ShaderID.GridMassBufferWrite, this.gridMassBuffer);
+            this.particlesToGridCS.SetBuffer(this.particlesToGridKernel.Index, ShaderID.GridPositionBufferWrite, this.gridPositionBuffer);
+            
             this.particlesToGridCS.Dispatch(this.particlesToGridKernel.Index,
                 Mathf.CeilToInt(sphController.Configure.D.numOfParticle / (float)this.particlesToGridKernel.ThreadX),
                 (int)this.particlesToGridKernel.ThreadY,
                 (int)this.particlesToGridKernel.ThreadZ);
+        }
+        
+
+        public Bounds GetGridBounds()
+        {
+            return new Bounds(
+                Vector3.zero, //TODO: ここは後で修正
+                this.gridSpacingH * this.GetGridDimension()
+            );
+        }
+
+        public Vector3 GetGridDimension()
+        {
+            return new Vector3(this.gridWidth, this.gridHeight, this.gridDepth);
+        }
+
+        public Vector3 GetCellStartPos()
+        {
+            Bounds gridBounds = this.GetGridBounds();
+            Debug.Log("gridBounds: " + gridBounds);
+            return gridBounds.center - gridBounds.extents;
+        }
+        
+        void OnDestroy()
+        {
+            gridBuffer?.Dispose();
+            gridBuffer = null;
+            
+            gridMassBuffer?.Dispose();
+            gridMassBuffer = null;
+            
+            gridPositionBuffer?.Dispose();
+            gridPositionBuffer = null;
         }
     }
 }

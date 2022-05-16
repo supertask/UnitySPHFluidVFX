@@ -1,10 +1,19 @@
 ﻿#include "./RgbToCmyk.hlsl"
-#include "Assets/MLS-MPM-Core/Shaders/MpmStruct.hlsl"
-#include "Assets/MLS-MPM-Core/Shaders/Grid.hlsl"
+//#include "Assets/MLS-MPM-Core/Shaders/MpmStruct.hlsl"
+//#include "Assets/MLS-MPM-Core/Shaders/Grid.hlsl"
 //#include "Assets/Common/Shaders/PhotoShopMath.hlsl"
 
-#define BUFFER_T LockMpmCell
-#define PHYSICAL_QUANTITY(element) ConvertInt2ToFloat(int2(element.mass, element.mass2))
+struct Cell {
+    int mass;
+	float3 position;
+    uint3 cellIndex3D;
+    int cellIndex;
+};
+
+#define BUFFER_T Cell
+//#define PHYSICAL_QUANTITY(element) ConvertInt2ToFloat(int2(element.mass, element.mass2))
+#define PHYSICAL_QUANTITY(element) element.mass
+
 StructuredBuffer<BUFFER_T> _GridBuffer;
 
 
@@ -34,6 +43,11 @@ float _LightAbsorptionThroughCloud;
 float _DarknessThreshold;
 float4 _LightColor0;
 
+
+//アルファブレンド
+float4 BlendAlpha(float4 baseColor, float4 blendColor) {
+    return baseColor + (1 - baseColor.a) * blendColor;
+}
 
 // Henyey-Greenstein(散乱位相関数モデル)
 // https://www.astro.umd.edu/~jph/HG_note.pdf

@@ -1,28 +1,5 @@
 ﻿#include "./RayMarchingUtil.hlsl"
 
-struct VertexInput
-{
-    float4 positionOS : POSITION; //vertex position in object space
-    float3 normal : NORMAL;
-    float2 uv : TEXCOORD0;
-};
-
-struct V2FScreenSpace
-{
-    float4 positionCS : SV_POSITION;
-    float2 uv : TEXCOORD0;
-    float3 positionWS : TEXCOORD1;
-    float3 viewVector : TEXCOORD2;
-};
-
-struct V2FObjectSpace
-{
-    float4 positionCS : SV_POSITION;
-    float3 positionWS : TEXCOORD0;
-    float3 screenPos : TEXCOORD1;
-    float3 viewVector : TEXCOORD2;
-    float2 uv : TEXCOORD3;
-};
 //
 // Fire & smoke settings
 //
@@ -181,6 +158,9 @@ float4 volumetricRayMarching(
         //float4 sceneColor = tex2D(_GrabPassTexture, screenUV);
     #elif defined(UNIT_RP__URP)
         float4 sceneColor = tex2D(_CameraOpaqueTexture, screenUV);
+    #elif defined(UNIT_RP__HDRP)
+        float4 sceneColor = float4(SampleCameraColor(screenUV), 1);
+
     #endif
 
 #if DEBUG_SCATTERING
